@@ -1,0 +1,6 @@
+nixtla
+matplotlib
+pandas
+statsforecast
+numpy
+sklearn
