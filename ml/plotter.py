@@ -1,18 +1,29 @@
+from statsforecast import StatsForecast
 import matplotlib.pyplot as plt
 
-def plot_sales_forecast(df_monthly, forecast_df, model_name='AutoARIMA'):
+def plot_sales_forecast(df_monthly, forecast_df, model_names=None):
     """ 
-    Plots the original sales data and the forecasted sales.
+    Plots the original sales data and multiple forecasted sales.
 
     Parameters:
     df_monthly (DataFrame): Historical sales data with columns ['ds', 'y'].
-    forecast_df (DataFrame): Forecasted sales data with columns ['ds', 'AutoARIMA'].
-
+    forecast_df (DataFrame): Forecasted sales data with 'ds' and one or more model columns.
+    model_names (list): List of model names to plot. If None, it defaults to the third column in forecast_df.
     """
-    plt.figure(figsize=(10, 6))
-    plt.plot(df_monthly['ds'], df_monthly['y'], label='Original Penjualan', color='blue')
-    plt.plot(forecast_df['ds'], forecast_df[model_name], label='Forecasted Penjualan', color='red', linestyle='--')
 
+    if model_names is None:
+        model_names = [forecast_df.columns[2]]  # Default to the third column
+
+    plt.figure(figsize=(10, 6))
+
+    # Plot original sales data
+    plt.plot(df_monthly['ds'], df_monthly['y'], label='Original Penjualan', color='blue')
+
+    # Plot forecasted values for each model
+    for model in model_names:
+        plt.plot(forecast_df['ds'], forecast_df[model], label=f'Forecast - {model}', linestyle='--')
+
+    # Formatting
     plt.title('Sales Forecast vs Actual Sales')
     plt.xlabel('Date')
     plt.ylabel('Penjualan')
@@ -20,8 +31,8 @@ def plot_sales_forecast(df_monthly, forecast_df, model_name='AutoARIMA'):
     plt.grid(True)
     plt.show()
 
-# Example usage:
-# plot_sales_forecast(df_monthly, forecast_df)
+# Example Usage:
+# plot_forecast(df_monthly, forecast_df, model_names=['AutoARIMA', 'Prophet', 'SARIMA'])
 
 def plot_sales(df_monthly):
     """ 
@@ -52,8 +63,14 @@ def plot_one_df_column(df, column_name):
     plt.grid(True)
     plt.show()  
 
-def check_stationary_timeseries(df):
-    from statsmodels.tsa.stattools import adfuller
-    result = adfuller(df['y'])
-    print(f'ADF Statistic: {result[0]}')
-    print(f'p-value: {result[1]}')
+def statsforecast_plot(df):
+    fig = StatsForecast.plot(df)
+
+    # snippet that will reopen closed figure
+    new_fig = plt.figure(figsize=(16,4))
+    new_manager = new_fig.canvas.manager
+    new_manager.canvas.figure = fig
+    fig.set_canvas(new_manager.canvas)
+
+    # wait for user interactions
+    plt.show()  
