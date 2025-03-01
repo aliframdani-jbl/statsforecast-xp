@@ -1,17 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-
-channel_mapping = {
-    'TIKTOK': 1,
-    'AKULAKU': 2,
-    'INTERNAL': 3,
-    'LAZADA': 4,
-    'BLIBLI': 5,
-    'BUKALAPAK': 6,
-    'SHOPEE': 7,
-    'TOKOPEDIA': 8
-}
+from sklearn.model_selection import train_test_split
 
 def check_stationary_timeseries(df):
     from statsmodels.tsa.stattools import adfuller
@@ -31,24 +21,4 @@ def reverse_differencing(df, column_name):
 
 def output_csv(df, output_filename):
     df.to_csv(output_filename, index=True)
-    
-def retrieve_from_raw_sales_cube_data(dataset_path):
-    df = pd.read_csv(dataset_path, parse_dates=['transaction_date'], low_memory=False)
-    print(df.columns)
-    df['diskon'] = np.where(df['diskon'] == 0, 0, (df['penjualan'] - df['diskon']) / df['penjualan'] * 100)
-    df['channel_name_numeric'] = df['channel_name'].map(channel_mapping)
-
-    print("CORR")
-    print(df[['margin', 'penjualan']].corr())
-    print(df[['qty', 'penjualan']].corr())
-    print(df[['diskon', 'penjualan']].corr())
-    print(df[['channel_name_numeric', 'penjualan']].corr())
-
-    df = df[['transaction_date', 'penjualan', 
-            'margin'
-            ]].rename(columns={
-        'transaction_date': 'ds',
-        'penjualan': 'y'
-    })
-
-    return df
+  

@@ -1,7 +1,7 @@
 from statsforecast import StatsForecast
 import matplotlib.pyplot as plt
 
-def plot_sales_forecast(df_monthly, forecast_df, model_names=None):
+def plot_sales_forecast(train_df, forecast_df, test_df, model_names=None):
     """ 
     Plots the original sales data and multiple forecasted sales.
 
@@ -17,7 +17,10 @@ def plot_sales_forecast(df_monthly, forecast_df, model_names=None):
     plt.figure(figsize=(10, 6))
 
     # Plot original sales data
-    plt.plot(df_monthly['ds'], df_monthly['y'], label='Original Penjualan', color='blue')
+    plt.plot(train_df['ds'], train_df['y'], label='Original Sales', color='blue')
+    
+    if test_df is not None:
+        plt.plot(test_df['ds'], test_df['y'], label='Actual Sales', color='red')
 
     # Plot forecasted values for each model
     for model in model_names:
@@ -63,14 +66,20 @@ def plot_one_df_column(df, column_name):
     plt.grid(True)
     plt.show()  
 
-def statsforecast_plot(df):
-    fig = StatsForecast.plot(df)
+def statsforecast_plot(df, forecast_df=None):
+    if forecast_df is None:
+        fig = StatsForecast.plot(df)
+    else:
+        fig = StatsForecast.plot(df, forecast_df, level=[90])
 
     # snippet that will reopen closed figure
     new_fig = plt.figure(figsize=(16,4))
     new_manager = new_fig.canvas.manager
     new_manager.canvas.figure = fig
     fig.set_canvas(new_manager.canvas)
-
+    plt.legend()
     # wait for user interactions
     plt.show()  
+    
+def plot_forecast(forecast_df):
+    forecast_df.plot()

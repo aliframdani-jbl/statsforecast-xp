@@ -13,10 +13,10 @@ from statsforecast.models import (
 def train_with_statsforecast(df_monthly):
     print("Training...")
     modelArima = AutoARIMA(
-            season_length = 6, 
-            seasonal=True,
+            season_length = 12, 
+            # seasonal=True,
             trace=True,
-            approximation=False,
+            # approximation=False,
         )
 
     modelETS = AutoETS(
@@ -26,8 +26,8 @@ def train_with_statsforecast(df_monthly):
     models = [
         modelArima,
         modelETS,
-        # HoltWinters(),
-        # Croston(),
+        HoltWinters(season_length=12),
+        # Croston(prediction_intervals=[90]),
         SeasonalNaive(season_length=12),
         HistoricAverage(),
         DOT(season_length=4)

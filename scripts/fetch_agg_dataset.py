@@ -11,4 +11,6 @@ table_name = "sales_cube_1161"
 weekly_sales = fetch_aggregated_sales(table_name, interval='week')
 print(f"Fetched {len(weekly_sales)} weekly records.")
 
-output_csv(weekly_sales, '../weekly_1161_future.csv')
+weekly_sales['unique_id'] = "sales_forecast"
+
+output_csv(weekly_sales, './weekly_1161_all.csv')

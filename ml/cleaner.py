@@ -9,17 +9,17 @@ def basic_data_cleaning(df):
     
     df.set_index('ds', inplace=True)
   
-    df_monthly = df.resample('W').agg({'y': 'sum', 'margin': 'sum'})
+    df_aggregated = df.resample('W').agg({'y': 'sum', 'margin': 'sum'})
     # df_monthly = df.resample('MS').agg({'y': 'sum'})
 
     # df_monthly = df_monthly.reindex(full_range, fill_value=0)
     # print("REINDEX: ")
     # print(df_monthly)
 
-    df_monthly.reset_index(inplace=True)
+    df_aggregated.reset_index(inplace=True)
     # df_monthly.rename(columns={'index': 'ds'}, inplace=True)
     
-    df_monthly['unique_id'] = "sales_forecast"
+    df_aggregated['unique_id'] = "sales_forecast"
     # print("---")
     # print(df_monthly.shape[0])
     # print("Debug shit mf:")
@@ -28,7 +28,7 @@ def basic_data_cleaning(df):
     # statsforecast_plot(df_monthly)
     # exit(0)
 
-    df_monthly['margin'].fillna(0, inplace=True)
+    df_aggregated['margin'].fillna(0, inplace=True)
 
 
     # scaler = StandardScaler()
@@ -49,9 +49,9 @@ def basic_data_cleaning(df):
     # df_monthly = df_monthly.dropna()  # Drops rows with NaN values
     # df_monthly = df_monthly[~df_monthly.isin([float('inf'), float('-inf')]).any(axis=1)] 
 
-    df_monthly['y'] = df_monthly['y'].diff()
+    df_aggregated['y'] = df_aggregated['y'].diff()
     # df_monthly['y'] = np.log(df_monthly['y'])
-    df_monthly = df_monthly.dropna()
+    df_aggregated = df_aggregated.dropna()
     # print(df_monthly)
 
     # df_monthly.drop(columns=['diskon'], inplace=True)
@@ -59,4 +59,4 @@ def basic_data_cleaning(df):
     # all_dates = pd.date_range(start=df_monthly["ds"].min(), end=df_monthly["ds"].max(), freq="MS")
     # df_filled = pd.DataFrame({"ds": all_dates}).merge(df_monthly, on="ds", how="left").fillna({"y": 0, "unique_id": "sales_forecast", "diskon_category": 1})
     
-    return df_monthly
+    return df_aggregated

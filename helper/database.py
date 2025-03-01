@@ -38,12 +38,12 @@ def fetch_aggregated_sales(table_name, interval='month'):
 
         query = f"""
             SELECT 
-                DATE_TRUNC(%s, transaction_date) AS period, 
-                SUM(penjualan) AS total_sales,
-                SUM(margin) AS total_margin
+                DATE_TRUNC(%s, transaction_date) AS ds, 
+                SUM(penjualan) AS y,
+                SUM(margin) AS margin
             FROM {table_name}
-            GROUP BY period
-            ORDER BY period ASC;
+            GROUP BY ds
+            ORDER BY ds ASC;
         """
 
         cursor.execute(query, (interval,))
@@ -52,7 +52,7 @@ def fetch_aggregated_sales(table_name, interval='month'):
         cursor.close()
         conn.close()
         
-        df = pd.DataFrame(result, columns=["period", "total_sales", "total_margin"])
+        df = pd.DataFrame(result, columns=["ds", "y", "margin"])
         return df
 
     except Exception as e:
